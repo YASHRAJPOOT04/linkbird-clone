@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/db";
-import { leads, campaigns } from "@/db/schema";
+import { db } from "../../../db";
+import { leads, campaigns } from "../../../db/schema";
 import { eq, desc, and, lt, gt, or, like, sql } from "drizzle-orm";
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 
     // Add status filter
     if (status) {
-      whereConditions.push(eq(leads.status, status as any));
+      whereConditions.push(eq(leads.status, status as "Pending" | "Contacted" | "Responded" | "Converted"));
     }
 
     // Add campaign filter
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
               like(leads.company, `%${search}%`)
             )!
           ] : []),
-          ...(status ? [eq(leads.status, status as any)] : []),
+          ...(status ? [eq(leads.status, status as "Pending" | "Contacted" | "Responded" | "Converted")] : []),
           ...(campaignId ? [eq(leads.campaignId, campaignId)] : [])
         )
       );

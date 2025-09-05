@@ -53,12 +53,12 @@ export default function LeadsPage() {
     mutationFn: deleteLead,
     onSuccess: (_, leadId) => {
       // Remove the lead from the leads list cache
-      queryClient.setQueryData(["leads"], (oldData: any) => {
+      queryClient.setQueryData(["leads"], (oldData: unknown) => {
         if (!oldData) return oldData;
         
         return {
           ...oldData,
-          pages: oldData.pages.map((page: any) => ({
+          pages: (oldData as any).pages.map((page: any) => ({
             ...page,
             data: {
               ...page.data,
