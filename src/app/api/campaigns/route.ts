@@ -3,11 +3,11 @@ import { db } from "../../../db";
 import { campaigns } from "../../../db/schema";
 import { eq, desc } from "drizzle-orm";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // TODO: Replace with actual better-auth session validation
     // For now, we'll simulate a logged-in user
-    const userId = "demo-user-id"; // This should come from better-auth session
+    const _userId = "demo-user-id"; // This should come from better-auth session
     
     // Extract userId from session when better-auth is implemented
     // const session = await auth.api.getSession({ headers: request.headers });
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
         userId: campaigns.userId,
       })
       .from(campaigns)
-      .where(eq(campaigns.userId, userId))
+      .where(eq(campaigns.userId, _userId))
       .orderBy(desc(campaigns.createdAt));
 
     // Calculate additional metrics for each campaign
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // TODO: Replace with actual better-auth session validation
-    const userId = "demo-user-id";
+    const _userId = "demo-user-id";
     
     const body = await request.json();
     const { name, status = "Draft" } = body;
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       .values({
         name: name.trim(),
         status: status as "Draft" | "Active" | "Paused" | "Completed",
-        userId,
+        userId: _userId,
       })
       .returning({
         id: campaigns.id,
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     // TODO: Replace with actual better-auth session validation
-    const userId = "demo-user-id";
+    const _userId = "demo-user-id";
     
     const body = await request.json();
     const { id, name, status } = body;
@@ -178,7 +178,7 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // TODO: Replace with actual better-auth session validation
-    const userId = "demo-user-id";
+    const _userId = "demo-user-id";
     
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");

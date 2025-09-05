@@ -11,7 +11,7 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { sidebarCollapsed, sidebarMobileOpen } = useSidebarState();
+  const { sidebarCollapsed, sidebarMobileOpen: _sidebarMobileOpen } = useSidebarState();
   const { toggleSidebarMobile } = useSidebarActions();
 
   return (

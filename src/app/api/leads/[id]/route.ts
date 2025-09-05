@@ -5,12 +5,12 @@ import { eq, and } from "drizzle-orm";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // TODO: Replace with actual better-auth session validation
     const userId = "demo-user-id";
-    const leadId = params.id;
+    const { id: leadId } = await params;
 
     // Fetch lead with campaign information
     const leadData = await db

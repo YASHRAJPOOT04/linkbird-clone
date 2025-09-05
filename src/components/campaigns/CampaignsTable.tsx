@@ -90,7 +90,7 @@ export default function CampaignsTable({
   onView,
   onStatusChange,
 }: CampaignsTableProps) {
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const [_selectedCampaign, _setSelectedCampaign] = useState<Campaign | null>(null);
 
   const handleStatusChange = (campaign: Campaign, newStatus: Campaign["status"]) => {
     onStatusChange?.(campaign, newStatus);

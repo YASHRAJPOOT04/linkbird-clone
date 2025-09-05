@@ -23,7 +23,7 @@ const initialState = {
 
 export const useUIStore = create<UIState>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       ...initialState,
       
       // Toggle sidebar collapsed state

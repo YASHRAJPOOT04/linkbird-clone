@@ -38,7 +38,6 @@ import {
   Users,
   Mail,
   Building,
-  Calendar,
   Clock,
   AlertCircle,
   RefreshCw,
@@ -179,7 +178,7 @@ export default function LeadsTable({
     refetch,
   } = useInfiniteQuery({
     queryKey: ["leads", { search, statusFilter, campaignFilter, sortBy, sortOrder }],
-    queryFn: ({ pageParam }) =>
+    queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
       fetchLeads({
         pageParam,
         search: search || undefined,
@@ -658,7 +657,7 @@ export default function LeadsTable({
         {/* End of results */}
         {!hasNextPage && allLeads.length > 0 && (
           <div className="text-center py-4 text-gray-500 text-sm">
-            You've reached the end of the results
+            You&apos;ve reached the end of the results
           </div>
         )}
       </CardContent>

@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +28,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  X,
   Mail,
   Phone,
   Building,
@@ -37,7 +35,6 @@ import {
   Clock,
   MapPin,
   Globe,
-  User,
   Edit,
   Trash2,
   MoreHorizontal,

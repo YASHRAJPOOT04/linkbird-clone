@@ -98,7 +98,7 @@ export default function CampaignsPage() {
   const {
     data: campaigns = [],
     isLoading,
-    error,
+    error: _error,
     refetch,
   } = useQuery({
     queryKey: ["campaigns"],
@@ -152,7 +152,7 @@ export default function CampaignsPage() {
   };
 
   // Handle campaign actions
-  const handleEdit = (campaign: Campaign) => {
+  const handleEdit = (_campaign: Campaign) => {
     // TODO: Implement edit campaign modal/form
     toast.info("Edit campaign functionality coming soon");
   };
@@ -163,7 +163,7 @@ export default function CampaignsPage() {
     }
   };
 
-  const handleView = (campaign: Campaign) => {
+  const handleView = (_campaign: Campaign) => {
     // TODO: Implement view campaign details
     toast.info("View campaign details coming soon");
   };
@@ -188,7 +188,7 @@ export default function CampaignsPage() {
     ? campaigns.reduce((sum, c) => sum + c.responseRate, 0) / campaigns.length 
     : 0;
 
-  if (error) {
+  if (_error) {
     return (
       <div className="p-6">
         <Card>
@@ -199,7 +199,7 @@ export default function CampaignsPage() {
                 Failed to load campaigns
               </h3>
               <p className="text-gray-500 mb-4">
-                {error instanceof Error ? error.message : "An unexpected error occurred"}
+                {_error instanceof Error ? _error.message : "An unexpected error occurred"}
               </p>
               <Button onClick={() => refetch()} variant="outline">
                 Try Again

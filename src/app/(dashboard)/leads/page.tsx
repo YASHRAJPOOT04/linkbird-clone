@@ -58,7 +58,7 @@ export default function LeadsPage() {
         
         return {
           ...oldData,
-          pages: (oldData as any).pages.map((page: any) => ({
+          pages: (oldData as { pages: Array<{ data: { leads: Lead[] } }> }).pages.map((page) => ({
             ...page,
             data: {
               ...page.data,
@@ -83,7 +83,7 @@ export default function LeadsPage() {
     openSheet(lead.id);
   };
 
-  const handleEdit = (lead: Lead) => {
+  const handleEdit = (_lead: Lead) => {
     // TODO: Implement edit lead modal/form
     toast.info("Edit lead functionality coming soon");
   };
@@ -94,7 +94,7 @@ export default function LeadsPage() {
     }
   };
 
-  const handleStatusChange = (lead: Lead, newStatus: Lead["status"]) => {
+  const handleStatusChange = (_lead: Lead, _newStatus: Lead["status"]) => {
     // This will be handled by the LeadDetailSheet component
     // The status change will trigger a refetch of the leads list
     toast.info(`Status change will be handled in the lead detail view`);

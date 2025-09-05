@@ -42,7 +42,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       } else {
         setError("Please enter both email and password");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Invalid email or password");
     } finally {
       setIsLoading(false);
@@ -58,7 +58,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       onSuccess?.();
       router.push("/campaigns");
-    } catch (err) {
+    } catch (_err) {
       setError("Google login failed");
     } finally {
       setIsLoading(false);
@@ -157,7 +157,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         </Button>
 
         <div className="text-center text-sm">
-          <span className="text-muted-foreground">Don't have an account? </span>
+          <span className="text-muted-foreground">Don&apos;t have an account? </span>
           <Link
             href="/register"
             className="text-primary hover:underline font-medium"

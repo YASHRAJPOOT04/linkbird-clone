@@ -11,7 +11,6 @@ import {
   Megaphone,
   Users,
   Settings,
-  Menu,
   X,
   LogOut,
   User,

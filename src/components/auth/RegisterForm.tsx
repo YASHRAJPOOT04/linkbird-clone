@@ -80,7 +80,7 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
       // For demo purposes, accept any valid form
       onSuccess?.();
       router.push("/campaigns");
-    } catch (err) {
+    } catch (_err) {
       setError("Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -96,7 +96,7 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
       await new Promise(resolve => setTimeout(resolve, 1000));
       onSuccess?.();
       router.push("/campaigns");
-    } catch (err) {
+    } catch (_err) {
       setError("Google registration failed");
     } finally {
       setIsLoading(false);
