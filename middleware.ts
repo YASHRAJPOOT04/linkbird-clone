@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "@/lib/auth";
 
 // Define public routes that don't require authentication
 const publicRoutes = ["/login", "/register"];
@@ -21,12 +20,9 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route)) || 
                           pathname === dashboardRoute;
   
-  // Use better-auth session validation
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
-  
-  const hasSession = !!session;
+  // Check for better-auth session cookie (Edge-compatible approach)
+  const sessionCookie = request.cookies.get("better-auth.session_token");
+  const hasSession = !!sessionCookie?.value;
   
   // If accessing a protected route without a session, redirect to login
   if (isProtectedRoute && !hasSession) {
