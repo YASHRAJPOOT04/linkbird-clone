@@ -74,16 +74,17 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
       if (result.error) {
         setError(result.error);
         toast.error(result.error);
+        setIsLoading(false);
       } else {
         toast.success("Account created successfully!");
         onSuccess?.();
+        // Redirect will happen automatically after successful auth
         router.push("/campaigns");
       }
     } catch (err) {
       const errorMessage = "Registration failed. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
-    } finally {
       setIsLoading(false);
     }
   };

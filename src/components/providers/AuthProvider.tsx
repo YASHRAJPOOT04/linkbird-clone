@@ -27,8 +27,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const data = await response.json();
           setSession(data);
         }
-    } catch (_error) {
-      console.error("Failed to get session:", _error);
+      } catch (_error) {
+        console.error("Failed to get session:", _error);
       } finally {
         setIsLoading(false);
       }

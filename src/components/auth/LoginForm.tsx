@@ -36,16 +36,17 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       if (result.error) {
         setError(result.error);
         toast.error(result.error);
+        setIsLoading(false);
       } else {
         toast.success("Successfully signed in!");
         onSuccess?.();
+        // Redirect will happen automatically after successful auth
         router.push("/campaigns");
       }
     } catch (err) {
       const errorMessage = "An unexpected error occurred";
       setError(errorMessage);
       toast.error(errorMessage);
-    } finally {
       setIsLoading(false);
     }
   };
