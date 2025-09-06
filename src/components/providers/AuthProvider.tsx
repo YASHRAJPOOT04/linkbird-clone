@@ -22,7 +22,7 @@ export function AppAuthProvider({ children }: { children: React.ReactNode }) {
     // Get initial session
     const getSession = async () => {
       try {
-        const response = await fetch("/api/auth/session");
+        const response = await fetch("/api/auth/betterauth/session");
         if (response.ok) {
           const data = await response.json();
           setSession(data);

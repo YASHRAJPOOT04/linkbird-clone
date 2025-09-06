@@ -10,6 +10,7 @@ export const auth = betterAuth({
       users,
     },
   }),
+  secret: process.env.BETTER_AUTH_SECRET || "fallback-secret-for-development",
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false, // Set to true in production
@@ -26,7 +27,7 @@ export const auth = betterAuth({
   },
   trustedOrigins: [
     process.env.BETTER_AUTH_URL || "http://localhost:3000",
-    "https://your-vercel-app.vercel.app", // Add your Vercel URL here
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://your-vercel-app.vercel.app",
   ],
 });
 
