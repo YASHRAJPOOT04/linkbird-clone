@@ -3,6 +3,24 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
+// Get the deployment URL for trusted origins
+const getDeploymentUrl = () => {
+  // For Vercel deployments
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // For custom domain or explicit setting
+  if (process.env.BETTER_AUTH_URL) {
+    return process.env.BETTER_AUTH_URL;
+  }
+  
+  // Fallback for local development
+  return "http://localhost:3000";
+};
+
+const deploymentUrl = getDeploymentUrl();
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -24,10 +42,15 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
+    cookie: {
+      domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    },
   },
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL || "http://localhost:3000",
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://your-vercel-app.vercel.app",
+    deploymentUrl,
+    "https://linkbird-clone-kmqf.vercel.app",
   ],
 });
 
