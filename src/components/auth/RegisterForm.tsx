@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock, User, Chrome } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { toast } from "sonner";
 
 interface RegisterFormProps {
   onSuccess?: () => void;
@@ -25,6 +27,7 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { signUp, signInWithGoogle } = useAuth();
 
   const validateForm = () => {
     if (!firstName.trim()) {
@@ -65,23 +68,21 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
     setIsLoading(true);
 
     try {
-      // TODO: Implement actual registration with better-auth
-      // For now, we'll simulate a registration
-      console.log("Registration attempt:", { 
-        firstName, 
-        lastName, 
-        email, 
-        password 
-      });
+      const fullName = `${firstName.trim()} ${lastName.trim()}`;
+      const result = await signUp(email, password, fullName);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // For demo purposes, accept any valid form
-      onSuccess?.();
-      router.push("/campaigns");
-    } catch (_err) {
-      setError("Registration failed. Please try again.");
+      if (result.error) {
+        setError(result.error);
+        toast.error(result.error);
+      } else {
+        toast.success("Account created successfully!");
+        onSuccess?.();
+        router.push("/campaigns");
+      }
+    } catch (err) {
+      const errorMessage = "Registration failed. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -90,15 +91,12 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
   const handleGoogleRegister = async () => {
     setIsLoading(true);
     try {
-      // TODO: Implement Google OAuth with better-auth
-      console.log("Google registration attempt");
-      // Simulate Google registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      onSuccess?.();
-      router.push("/campaigns");
-    } catch (_err) {
-      setError("Google registration failed");
-    } finally {
+      await signInWithGoogle();
+      // The redirect will happen automatically
+    } catch (err) {
+      const errorMessage = "Google registration failed";
+      setError(errorMessage);
+      toast.error(errorMessage);
       setIsLoading(false);
     }
   };

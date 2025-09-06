@@ -2,14 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../db";
 import { leads, campaigns } from "../../../db/schema";
 import { eq, desc, and, lt, gt, or, like, sql } from "drizzle-orm";
+import { auth } from "@/lib/auth";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
 
 export async function GET(request: NextRequest) {
   try {
-    // TODO: Replace with actual better-auth session validation
-    const userId = "demo-user-id";
+    // Get session from better-auth
+    const session = await auth.api.getSession({ 
+      headers: request.headers 
+    });
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = session.user.id;
     
     const { searchParams } = new URL(request.url);
     
@@ -209,8 +218,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // TODO: Replace with actual better-auth session validation
-    const userId = "demo-user-id";
+    // Get session from better-auth
+    const session = await auth.api.getSession({ 
+      headers: request.headers 
+    });
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = session.user.id;
     
     const body = await request.json();
     const { name, email, company, status = "Pending", campaignId, lastContactDate } = body;
@@ -276,8 +293,16 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    // TODO: Replace with actual better-auth session validation
-    const userId = "demo-user-id";
+    // Get session from better-auth
+    const session = await auth.api.getSession({ 
+      headers: request.headers 
+    });
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = session.user.id;
     
     const body = await request.json();
     const { id, name, email, company, status, lastContactDate } = body;

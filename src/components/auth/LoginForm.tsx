@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, Mail, Lock, Chrome } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { toast } from "sonner";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -21,6 +23,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { signIn, signInWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,22 +31,20 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     setError("");
 
     try {
-      // TODO: Implement actual authentication with better-auth
-      // For now, we'll simulate a login
-      console.log("Login attempt:", { email, password });
+      const result = await signIn(email, password);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For demo purposes, accept any email/password
-      if (email && password) {
+      if (result.error) {
+        setError(result.error);
+        toast.error(result.error);
+      } else {
+        toast.success("Successfully signed in!");
         onSuccess?.();
         router.push("/campaigns");
-      } else {
-        setError("Please enter both email and password");
       }
-    } catch (_err) {
-      setError("Invalid email or password");
+    } catch (err) {
+      const errorMessage = "An unexpected error occurred";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -52,15 +53,12 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      // TODO: Implement Google OAuth with better-auth
-      console.log("Google login attempt");
-      // Simulate Google login
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      onSuccess?.();
-      router.push("/campaigns");
-    } catch (_err) {
-      setError("Google login failed");
-    } finally {
+      await signInWithGoogle();
+      // The redirect will happen automatically
+    } catch (err) {
+      const errorMessage = "Google login failed";
+      setError(errorMessage);
+      toast.error(errorMessage);
       setIsLoading(false);
     }
   };

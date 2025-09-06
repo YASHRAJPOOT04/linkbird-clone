@@ -2,14 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../../db";
 import { leads, campaigns } from "../../../../db/schema";
 import { eq, and } from "drizzle-orm";
+import { auth } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // TODO: Replace with actual better-auth session validation
-    const userId = "demo-user-id";
+    // Get session from better-auth
+    const session = await auth.api.getSession({ 
+      headers: request.headers 
+    });
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = session.user.id;
     const { id: leadId } = await params;
 
     // Fetch lead with campaign information

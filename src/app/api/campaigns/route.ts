@@ -2,19 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../db";
 import { campaigns } from "../../../db/schema";
 import { eq, desc } from "drizzle-orm";
+import { auth } from "@/lib/auth";
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    // TODO: Replace with actual better-auth session validation
-    // For now, we'll simulate a logged-in user
-    const _userId = "demo-user-id"; // This should come from better-auth session
+    // Get session from better-auth
+    const session = await auth.api.getSession({ 
+      headers: request.headers 
+    });
     
-    // Extract userId from session when better-auth is implemented
-    // const session = await auth.api.getSession({ headers: request.headers });
-    // if (!session) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
-    // const userId = session.user.id;
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = session.user.id;
 
     // Fetch campaigns for the logged-in user
     const userCampaigns = await db
@@ -26,7 +27,7 @@ export async function GET(_request: NextRequest) {
         userId: campaigns.userId,
       })
       .from(campaigns)
-      .where(eq(campaigns.userId, _userId))
+      .where(eq(campaigns.userId, userId))
       .orderBy(desc(campaigns.createdAt));
 
     // Calculate additional metrics for each campaign
@@ -76,8 +77,16 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // TODO: Replace with actual better-auth session validation
-    const _userId = "demo-user-id";
+    // Get session from better-auth
+    const session = await auth.api.getSession({ 
+      headers: request.headers 
+    });
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = session.user.id;
     
     const body = await request.json();
     const { name, status = "Draft" } = body;
@@ -95,7 +104,7 @@ export async function POST(request: NextRequest) {
       .values({
         name: name.trim(),
         status: status as "Draft" | "Active" | "Paused" | "Completed",
-        userId: _userId,
+        userId: userId,
       })
       .returning({
         id: campaigns.id,
@@ -123,8 +132,16 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    // TODO: Replace with actual better-auth session validation
-    const _userId = "demo-user-id";
+    // Get session from better-auth
+    const session = await auth.api.getSession({ 
+      headers: request.headers 
+    });
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    const userId = session.user.id;
     
     const body = await request.json();
     const { id, name, status } = body;

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { auth } from "@/lib/auth";
 
 // Define public routes that don't require authentication
 const publicRoutes = ["/login", "/register"];
@@ -10,7 +11,7 @@ const protectedRoutes = ["/campaigns", "/leads", "/settings"];
 // Define the root dashboard route
 const dashboardRoute = "/";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
   // Check if the current path is a public route
@@ -20,9 +21,12 @@ export function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route)) || 
                           pathname === dashboardRoute;
   
-  // For now, we'll use a simple session check
-  // TODO: Replace with actual better-auth session validation
-  const hasSession = request.cookies.get("better-auth.session")?.value;
+  // Use better-auth session validation
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+  
+  const hasSession = !!session;
   
   // If accessing a protected route without a session, redirect to login
   if (isProtectedRoute && !hasSession) {
