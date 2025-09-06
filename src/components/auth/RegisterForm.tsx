@@ -78,7 +78,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
       } else {
         toast.success("Account created successfully!");
         onSuccess?.();
-        // Redirect will happen automatically after successful auth
         router.push("/campaigns");
       }
     } catch (err) {
@@ -93,7 +92,6 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
     setIsLoading(true);
     try {
       await signInWithGoogle();
-      // The redirect will happen automatically
     } catch (err) {
       const errorMessage = "Google registration failed";
       setError(errorMessage);

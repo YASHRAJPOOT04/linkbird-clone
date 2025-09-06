@@ -1,10 +1,10 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import type { Session } from "@/lib/auth";
+import { authClient } from "@/lib/auth-client";
 
 interface AuthContextType {
-  session: Session | null;
+  session: { user: { id: string; email: string; name: string } } | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (email: string, password: string, name: string) => Promise<{ error?: string }>;
@@ -14,8 +14,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
+export function AppAuthProvider({ children }: { children: React.ReactNode }) {
+  const [session, setSession] = useState<{ user: { id: string; email: string; name: string } } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,33 +35,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     getSession();
-
-    // Listen for auth state changes
-    const handleStorageChange = () => {
-      getSession();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const response = await fetch("/api/auth/sign-in/email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const result = await authClient.signIn.email({
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setSession(data.user);
-        return {};
+      if (result.error) {
+        return { error: result.error.message };
       } else {
-        return { error: data.message || "Sign in failed" };
+        setSession(result.data);
+        return {};
       }
     } catch (_error) {
       return { error: "Network error" };
@@ -70,21 +57,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
-      const response = await fetch("/api/auth/sign-up/email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, name }),
+      const result = await authClient.signUp.email({
+        email,
+        password,
+        name,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setSession(data.user);
-        return {};
+      if (result.error) {
+        return { error: result.error.message };
       } else {
-        return { error: data.message || "Sign up failed" };
+        setSession(result.data);
+        return {};
       }
     } catch (_error) {
       return { error: "Network error" };
@@ -93,9 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      await fetch("/api/auth/sign-out", {
-        method: "POST",
-      });
+      await authClient.signOut();
       setSession(null);
     } catch (error) {
       console.error("Sign out failed:", error);
@@ -104,7 +85,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      window.location.href = "/api/auth/sign-in/google";
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/campaigns",
+      });
     } catch (error) {
       console.error("Google sign in failed:", error);
     }
@@ -129,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error("useAuth must be used within an AppAuthProvider");
   }
   return context;
 }

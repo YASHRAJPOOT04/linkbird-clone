@@ -40,7 +40,6 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       } else {
         toast.success("Successfully signed in!");
         onSuccess?.();
-        // Redirect will happen automatically after successful auth
         router.push("/campaigns");
       }
     } catch (err) {
@@ -55,7 +54,6 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     setIsLoading(true);
     try {
       await signInWithGoogle();
-      // The redirect will happen automatically
     } catch (err) {
       const errorMessage = "Google login failed";
       setError(errorMessage);
