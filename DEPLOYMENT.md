@@ -49,9 +49,68 @@ The authentication system is configured to work with the Vercel deployment. Make
 
 ### 5. Troubleshooting
 
-If you encounter authentication issues:
+If you encounter authentication issues in your deployed application:
 
-1. Check that all environment variables are correctly set in Vercel
-2. Verify the database connection is working
-3. Clear browser cookies and try again
-4. Check Vercel logs for any errors
+1. **Cookie Domain Issues**:
+   - Ensure the cookie domain is not set to a specific value in `auth.ts`
+   - The application has been updated to use `domain: undefined` to work with any subdomain
+
+2. **Callback URL Problems**:
+   - Verify that Google OAuth callback URLs include your exact Vercel deployment URL
+   - For Google sign-in, ensure the callback URL is correctly set in the Google Cloud Console
+
+3. **Environment Variables**:
+   - Double-check that all environment variables are correctly set in Vercel
+   - Ensure there are no typos or trailing spaces in the values
+   - After changing environment variables, redeploy the application
+
+4. **CORS Issues**:
+   - Verify that your Vercel deployment URL is included in the `trustedOrigins` array in `auth.ts`
+   - Check browser console for CORS-related errors
+
+5. **Session Not Persisting**:
+   - Ensure cookies are being set correctly (check Application tab in browser DevTools)
+   - Verify that the `secure` flag is set to `true` for production
+   - Check that `sameSite` is set to `lax` to allow redirects
+
+6. **Redirect Issues**:
+   - Verify that the middleware.ts file is correctly handling redirects
+   - Check that the cookie name being checked matches what's being set by the auth system
+
+### 6. Required Fixes for Authentication
+
+The following changes have been made to fix authentication issues:
+
+1. **Cookie Domain Configuration**:
+   - Updated `auth.ts` to use `domain: undefined` instead of `.vercel.app`
+   - This allows cookies to work correctly with your specific Vercel subdomain
+
+2. **Auth Client URL Handling**:
+   - Modified `auth-client.ts` to use `window.location.origin` on the client side
+   - Added proper handling of Vercel URL environment variables
+
+3. **Google Sign-In Callback URL**:
+   - Updated the Google sign-in callback URL in `AuthProvider.tsx` to use the full origin
+   - This ensures the callback works correctly in the deployed environment
+
+After deploying these changes, your authentication system should work correctly. If you still encounter issues, please check the troubleshooting steps above.
+
+### 7. Testing Authentication
+
+To verify that authentication is working correctly:
+
+1. **Run the Auth Test Script**:
+   ```bash
+   npm run test:auth
+   ```
+   This will check if the authentication endpoints are accessible and responding correctly.
+
+2. **Manual Testing**:
+   - Try logging in with email/password
+   - Try signing up with a new account
+   - Try signing in with Google
+   - Verify that you are redirected to the dashboard after successful authentication
+   - Check that protected routes require authentication
+   - Verify the database connection is working
+   - Clear browser cookies and try again if needed
+   - Check Vercel logs for any errors

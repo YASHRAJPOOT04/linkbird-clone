@@ -43,7 +43,8 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
     cookie: {
-      domain: process.env.NODE_ENV === "production" ? ".vercel.app" : undefined,
+      // Don't set domain to allow the cookie to work on the specific subdomain
+      domain: undefined,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     },

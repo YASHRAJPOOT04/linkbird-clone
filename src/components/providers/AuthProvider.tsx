@@ -85,9 +85,12 @@ export function AppAuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
+      // Use window.location.origin to ensure the callback URL is correct
+      const callbackUrl = typeof window !== 'undefined' ? `${window.location.origin}/campaigns` : '/campaigns';
+      
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/campaigns",
+        callbackURL: callbackUrl,
       });
     } catch (error) {
       console.error("Google sign in failed:", error);
